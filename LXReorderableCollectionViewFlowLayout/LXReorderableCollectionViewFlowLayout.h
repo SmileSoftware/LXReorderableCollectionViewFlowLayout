@@ -7,6 +7,8 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol LXReorderableCollectionViewDelegateFlowLayout, LXReorderableCollectionViewDataSource;
+
 @interface LXReorderableCollectionViewFlowLayout : UICollectionViewFlowLayout <UIGestureRecognizerDelegate>
 
 @property (assign, nonatomic) CGFloat scrollingSpeed;
@@ -14,6 +16,11 @@
 @property (strong, nonatomic, readonly) UILongPressGestureRecognizer *longPressGestureRecognizer;
 @property (strong, nonatomic, readonly) UIPanGestureRecognizer *panGestureRecognizer;
 @property (strong, nonatomic) NSIndexPath *selectedItemIndexPath;
+
+@property (strong, nonatomic) UIView *currentView;
+@property (assign, nonatomic, readonly) id<LXReorderableCollectionViewDataSource> dataSource;
+@property (assign, nonatomic, readonly) id<LXReorderableCollectionViewDelegateFlowLayout> delegate;
+
 
 - (void)setUpGestureRecognizersOnCollectionView __attribute__((deprecated("Calls to setUpGestureRecognizersOnCollectionView method are not longer needed as setup are done automatically through KVO.")));
 
