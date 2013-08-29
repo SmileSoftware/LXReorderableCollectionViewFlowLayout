@@ -10,21 +10,6 @@
 
 #define LX_FRAMES_PER_SECOND 60.0
 
-#ifndef CGGEOMETRY_LXSUPPORT_H_
-CG_INLINE CGPoint
-LXS_CGPointAdd(CGPoint point1, CGPoint point2) {
-    return CGPointMake(point1.x + point2.x, point1.y + point2.y);
-}
-#endif
-
-typedef NS_ENUM(NSInteger, LXScrollingDirection) {
-    LXScrollingDirectionUnknown = 0,
-    LXScrollingDirectionUp,
-    LXScrollingDirectionDown,
-    LXScrollingDirectionLeft,
-    LXScrollingDirectionRight
-};
-
 static NSString * const kLXScrollingDirectionKey = @"LXScrollingDirection";
 static NSString * const kLXCollectionViewKeyPath = @"collectionView";
 
@@ -48,8 +33,6 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
 
 @interface LXReorderableCollectionViewFlowLayout ()
 
-@property (assign, nonatomic) CGPoint currentViewCenter;
-@property (assign, nonatomic) CGPoint panTranslationInCollectionView;
 @property (strong, nonatomic) NSTimer *scrollingTimer;
 
 

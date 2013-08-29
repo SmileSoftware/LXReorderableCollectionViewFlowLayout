@@ -7,6 +7,22 @@
 
 #import <UIKit/UIKit.h>
 
+#ifndef CGGEOMETRY_LXSUPPORT_H_
+CG_INLINE CGPoint
+LXS_CGPointAdd(CGPoint point1, CGPoint point2) {
+    return CGPointMake(point1.x + point2.x, point1.y + point2.y);
+}
+#endif
+
+typedef NS_ENUM(NSInteger, LXScrollingDirection) {
+    LXScrollingDirectionUnknown = 0,
+    LXScrollingDirectionUp,
+    LXScrollingDirectionDown,
+    LXScrollingDirectionLeft,
+    LXScrollingDirectionRight
+};
+
+
 @protocol LXReorderableCollectionViewDelegateFlowLayout, LXReorderableCollectionViewDataSource;
 
 @interface LXReorderableCollectionViewFlowLayout : UICollectionViewFlowLayout <UIGestureRecognizerDelegate>
@@ -20,9 +36,19 @@
 @property (strong, nonatomic) UIView *currentView;
 @property (assign, nonatomic, readonly) id<LXReorderableCollectionViewDataSource> dataSource;
 @property (assign, nonatomic, readonly) id<LXReorderableCollectionViewDelegateFlowLayout> delegate;
+@property (assign, nonatomic) CGPoint currentViewCenter;
+@property (assign, nonatomic) CGPoint panTranslationInCollectionView;
 
 
 - (void)setUpGestureRecognizersOnCollectionView __attribute__((deprecated("Calls to setUpGestureRecognizersOnCollectionView method are not longer needed as setup are done automatically through KVO.")));
+
+// Expose for subclassing
+- (void)invalidateLayoutIfNecessary;
+- (void)setupScrollTimerInDirection:(LXScrollingDirection)direction;
+- (void)invalidatesScrollTimer;
+- (void)handlePanGesture:(UIPanGestureRecognizer *)gestureRecognizer;
+
+
 
 @end
 
