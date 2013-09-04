@@ -47,6 +47,7 @@ typedef NS_ENUM(NSInteger, LXScrollingDirection) {
 - (void)setupScrollTimerInDirection:(LXScrollingDirection)direction;
 - (void)invalidatesScrollTimer;
 - (void)handlePanGesture:(UIPanGestureRecognizer *)gestureRecognizer;
+- (void)handleLongPressGesture:(UILongPressGestureRecognizer *)gestureRecognizer;
 
 
 
