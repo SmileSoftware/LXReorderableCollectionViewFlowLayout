@@ -234,8 +234,8 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
             if ([self.delegate respondsToSelector:@selector(collectionView:layout:willBeginDraggingItemAtIndexPath:)]) {
                 [self.delegate collectionView:self.collectionView layout:self willBeginDraggingItemAtIndexPath:self.selectedItemIndexPath];
             }
-            
-            UICollectionViewCell *collectionViewCell = [self.collectionView cellForItemAtIndexPath:self.selectedItemIndexPath];
+			
+			UICollectionViewCell * collectionViewCell = [self.collectionView.dataSource collectionView:self.collectionView cellForItemAtIndexPath:self.selectedItemIndexPath];
             
             self.currentView = [[UIView alloc] initWithFrame:collectionViewCell.frame];
             
