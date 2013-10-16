@@ -219,6 +219,20 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
 }
 
 
+- (UIView *)createCurrentView
+{
+	UICollectionViewCell * collectionViewCell = [self.collectionView.dataSource collectionView:self.collectionView cellForItemAtIndexPath:self.selectedItemIndexPath];
+	
+	UIView *view = [[UIView alloc] initWithFrame:collectionViewCell.frame];
+	collectionViewCell.highlighted = NO;
+	UIImageView *imageView = [[UIImageView alloc] initWithImage:[collectionViewCell LX_rasterizedImage]];
+	imageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+	
+	[view addSubview:imageView];
+	
+	return view;
+}
+
 - (void)handleLongPressGesture:(UILongPressGestureRecognizer *)gestureRecognizer {
     switch(gestureRecognizer.state) {
         case UIGestureRecognizerStateBegan: {
@@ -230,29 +244,20 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
             }
             
             self.selectedItemIndexPath = currentIndexPath;
+
+			if ([self.delegate respondsToSelector:@selector(collectionView:draggingThumbnailViewWithSelectedIndexPath:)])
+				self.currentView = [self.delegate collectionView:self.collectionView draggingThumbnailViewWithSelectedIndexPath:self.selectedItemIndexPath];
+			
+			if (!self.currentView)
+				self.currentView = [self createCurrentView];
+			
+			if (self.currentView)
+				[self.collectionView addSubview:self.currentView];
             
             if ([self.delegate respondsToSelector:@selector(collectionView:layout:willBeginDraggingItemAtIndexPath:)]) {
                 [self.delegate collectionView:self.collectionView layout:self willBeginDraggingItemAtIndexPath:self.selectedItemIndexPath];
             }
 			
-			UICollectionViewCell * collectionViewCell = [self.collectionView.dataSource collectionView:self.collectionView cellForItemAtIndexPath:self.selectedItemIndexPath];
-            
-            self.currentView = [[UIView alloc] initWithFrame:collectionViewCell.frame];
-            
-            collectionViewCell.highlighted = YES;
-            UIImageView *highlightedImageView = [[UIImageView alloc] initWithImage:[collectionViewCell LX_rasterizedImage]];
-            highlightedImageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-            highlightedImageView.alpha = 1.0f;
-            
-            collectionViewCell.highlighted = NO;
-            UIImageView *imageView = [[UIImageView alloc] initWithImage:[collectionViewCell LX_rasterizedImage]];
-            imageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-            imageView.alpha = 0.0f;
-            
-            [self.currentView addSubview:imageView];
-            [self.currentView addSubview:highlightedImageView];
-            [self.collectionView addSubview:self.currentView];
-            
             self.currentViewCenter = self.currentView.center;
             
             __weak typeof(self) weakSelf = self;
@@ -264,14 +269,11 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
                  __strong typeof(self) strongSelf = weakSelf;
                  if (strongSelf) {
                      strongSelf.currentView.transform = CGAffineTransformMakeScale(1.1f, 1.1f);
-                     highlightedImageView.alpha = 0.0f;
-                     imageView.alpha = 1.0f;
                  }
              }
              completion:^(BOOL finished) {
                  __strong typeof(self) strongSelf = weakSelf;
                  if (strongSelf) {
-                     [highlightedImageView removeFromSuperview];
                      
                      if ([strongSelf.delegate respondsToSelector:@selector(collectionView:layout:didBeginDraggingItemAtIndexPath:)]) {
                          [strongSelf.delegate collectionView:strongSelf.collectionView layout:strongSelf didBeginDraggingItemAtIndexPath:strongSelf.selectedItemIndexPath];
