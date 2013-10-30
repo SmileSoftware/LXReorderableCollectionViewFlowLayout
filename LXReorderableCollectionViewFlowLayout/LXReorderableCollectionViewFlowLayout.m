@@ -261,6 +261,12 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
             self.currentViewCenter = self.currentView.center;
             
             __weak typeof(self) weakSelf = self;
+			
+			for (NSIndexPath *indexPath in self.collectionView.indexPathsForSelectedItems) {
+				UICollectionViewCell *cell  =[self.collectionView cellForItemAtIndexPath:indexPath];
+				cell.hidden = YES;
+			}
+			
             [UIView
              animateWithDuration:0.3
              delay:0.0
@@ -269,6 +275,19 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
                  __strong typeof(self) strongSelf = weakSelf;
                  if (strongSelf) {
                      strongSelf.currentView.transform = CGAffineTransformMakeScale(1.1f, 1.1f);
+					 NSArray *subs = strongSelf.currentView.subviews;
+					 if (subs.count > 1) {
+						 CGPoint dragCenter = ((UIView *)[subs lastObject]).center;
+						 for (NSUInteger counter = 0; counter < (subs.count - 1); counter++) {
+							 UIView *subview = subs[counter];
+							 subview.center = dragCenter;
+							 CGFloat degrees = M_PI *.015f * (counter + 1);
+							 CGAffineTransform rotationTransform = CGAffineTransformIdentity;
+							 rotationTransform = CGAffineTransformRotate(rotationTransform, degrees);
+							 subview.transform = rotationTransform;
+
+						 }
+					 }
                  }
              }
              completion:^(BOOL finished) {
@@ -278,6 +297,12 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
                      if ([strongSelf.delegate respondsToSelector:@selector(collectionView:layout:didBeginDraggingItemAtIndexPath:)]) {
                          [strongSelf.delegate collectionView:strongSelf.collectionView layout:strongSelf didBeginDraggingItemAtIndexPath:strongSelf.selectedItemIndexPath];
                      }
+
+					 for (NSIndexPath *indexPath in strongSelf.collectionView.indexPathsForSelectedItems) {
+						 UICollectionViewCell *cell  =[strongSelf.collectionView cellForItemAtIndexPath:indexPath];
+						 cell.hidden = NO;
+					 }
+
                  }
              }];
             
