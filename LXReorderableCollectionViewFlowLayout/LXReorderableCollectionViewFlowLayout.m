@@ -262,9 +262,13 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
             
             __weak typeof(self) weakSelf = self;
 			
+			NSMutableArray *hiddenCells = [NSMutableArray array];
 			for (NSIndexPath *indexPath in self.collectionView.indexPathsForSelectedItems) {
 				UICollectionViewCell *cell  =[self.collectionView cellForItemAtIndexPath:indexPath];
-				cell.hidden = YES;
+				if (cell) {
+					[hiddenCells addObject:cell];
+					cell.hidden = YES;
+				}
 			}
 			
             [UIView
@@ -293,6 +297,12 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
              completion:^(BOOL finished) {
                  __strong typeof(self) strongSelf = weakSelf;
                  if (strongSelf) {
+					 
+					 // Reshow the temporarily hidden cells
+					 for (UICollectionViewCell *cell in hiddenCells) {
+						 cell.hidden = NO;
+					 }
+
                      
                      if ([strongSelf.delegate respondsToSelector:@selector(collectionView:layout:didBeginDraggingItemAtIndexPath:)]) {
                          [strongSelf.delegate collectionView:strongSelf.collectionView layout:strongSelf didBeginDraggingItemAtIndexPath:strongSelf.selectedItemIndexPath];
